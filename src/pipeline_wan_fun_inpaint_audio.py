@@ -185,6 +185,11 @@ class WanFunInpaintAudioPipeline(DiffusionPipeline):
         )
 
         self.video_processor = VideoProcessor(vae_scale_factor=self.vae.spacial_compression_ratio)
+        # Reduce memory by slicing attention when supported
+        try:
+            getattr(self, "enable_attention_slicing", lambda *args, **kwargs: None)()
+        except Exception:
+            pass
         self.image_processor = VaeImageProcessor(vae_scale_factor=self.vae.spacial_compression_ratio)
         self.mask_processor = VaeImageProcessor(
             vae_scale_factor=self.vae.spacial_compression_ratio, do_normalize=False, do_binarize=True, do_convert_grayscale=True
@@ -710,7 +715,9 @@ class WanFunInpaintAudioPipeline(DiffusionPipeline):
                     masked_video_latents_input = (
                         torch.cat([masked_video_latents] * 3) if do_classifier_free_guidance else masked_video_latents
                     )
-                    y = torch.cat([mask_input, masked_video_latents_input], dim=1).to(device, weight_dtype) 
+                    y = torch.cat([mask_input, masked_video_latents_input], dim=1)
+                    # Transfer only when needed to reduce VRAM
+                    y = y.to(device, weight_dtype)
 
                 clip_context_input = (
                     torch.cat([clip_context] * 3) if do_classifier_free_guidance else clip_context
@@ -721,9 +728,11 @@ class WanFunInpaintAudioPipeline(DiffusionPipeline):
 
                 # predict noise model_output
                 with torch.cuda.amp.autocast(dtype=weight_dtype):
+                    # Ensure audio embeds live on the same device as the current latents/model
+                    _audio_embeds = audio_embeds.to(device=latent_model_input.device, dtype=weight_dtype)
                     noise_pred = self.transformer(
                         x=latent_model_input,
-                        context=(in_prompt_embeds, audio_embeds, latent_model_input.shape[2], ip_mask, audio_scale),
+                        context=(in_prompt_embeds, _audio_embeds, latent_model_input.shape[2], ip_mask, audio_scale),
                         t=timestep,
                         seq_len=seq_len,
                         y=y,

@@ -3,7 +3,7 @@ einops
 safetensors
 timm
 tomesd
-torch>=2.1.2
+# torch>=2.1.2
 torchdiffeq
 torchsde
 decord
@@ -29,4 +29,6 @@ moviepy==2.2.1
 tensorflow==2.15.0
 retina-face==0.0.17
 librosa
-gradio
+# gradio
+huggingface_hub>=0.24.0
+hf_xet

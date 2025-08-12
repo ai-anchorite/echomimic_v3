@@ -77,8 +77,7 @@ Terminal Technology Department, Alipay, Ant Group.
     </td>
 </tr>
 </table>
-
-For more demo videos, please refer to the [project page](https://antgroup.github.io/ai/echomimic_v3/).
+For more demo videos, please refer to the project page.
 
 ## Quick Start
 ### Environment Setup

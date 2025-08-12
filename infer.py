@@ -303,9 +303,6 @@ def main():
         last_frames = init_frames + partial_video_length
         new_sample = None
 
-        # Precompute mix_ratio outside the loop
-        mix_ratio = torch.linspace(0, 1, steps=config.overlap_video_length).view(1, 1, -1, 1, 1)
-
         while init_frames < video_length:
             if last_frames >= video_length:
                 partial_video_length = video_length - init_frames
@@ -324,34 +321,36 @@ def main():
     
             partial_audio_embeds = audio_embeds[:, init_frames * 2 : (init_frames + partial_video_length) * 2]
             # video_length = init_frames + partial_video_length
-            with torch.no_grad():
-                sample = pipeline(
-                    prompt,
-                    num_frames            = partial_video_length,
-                    negative_prompt       = config.negative_prompt,
-                    audio_embeds          = partial_audio_embeds,
-                    audio_scale           = config.audio_scale,
-                    ip_mask               = ip_mask,
-                    use_un_ip_mask        = config.use_un_ip_mask,
-                    height                = sample_height,
-                    width                 = sample_width,
-                    generator             = generator,
-                    neg_scale             = config.neg_scale,
-                    neg_steps             = config.neg_steps,
-                    use_dynamic_cfg       = config.use_dynamic_cfg,
-                    use_dynamic_acfg      = config.use_dynamic_acfg,
-                    guidance_scale        = config.guidance_scale,
-                    audio_guidance_scale  = config.audio_guidance_scale,
-                    num_inference_steps   = config.num_inference_steps,
-                    video                 = input_video,
-                    mask_video            = input_video_mask,
-                    clip_image            = clip_image,
-                    cfg_skip_ratio        = config.cfg_skip_ratio,
-                    shift                 = config.shift,
-                ).videos
+
+            sample = pipeline(
+                prompt,
+                num_frames            = partial_video_length,
+                negative_prompt       = config.negative_prompt,
+                audio_embeds          = partial_audio_embeds,
+                audio_scale           = config.audio_scale,
+                ip_mask               = ip_mask,
+                use_un_ip_mask        = config.use_un_ip_mask,
+                height                = sample_height,
+                width                 = sample_width,
+                generator             = generator,
+                neg_scale             = config.neg_scale,
+                neg_steps             = config.neg_steps,
+                use_dynamic_cfg       = config.use_dynamic_cfg,
+                use_dynamic_acfg      = config.use_dynamic_acfg,
+                guidance_scale        = config.guidance_scale,
+                audio_guidance_scale  = config.audio_guidance_scale,
+                num_inference_steps   = config.num_inference_steps,
+                video                 = input_video,
+                mask_video            = input_video_mask,
+                clip_image            = clip_image,
+                cfg_skip_ratio        = config.cfg_skip_ratio,
+                shift                 = config.shift,
+            ).videos
             
             if init_frames != 0:
-                
+                mix_ratio = torch.from_numpy(
+                    np.array([float(i) / float(config.overlap_video_length) for i in range(config.overlap_video_length)], np.float32)
+                ).unsqueeze(0).unsqueeze(0).unsqueeze(-1).unsqueeze(-1)
                 new_sample[:, :, -config.overlap_video_length:] = (
                     new_sample[:, :, -config.overlap_video_length:] * (1 - mix_ratio) +
                     sample[:, :, :config.overlap_video_length] * mix_ratio
@@ -372,10 +371,6 @@ def main():
 
             init_frames += partial_video_length - config.overlap_video_length
             last_frames = init_frames + partial_video_length
-
-            del input_video, input_video_mask, partial_audio_embeds
-            torch.cuda.empty_cache()  # Release unused memory
-            
 
         # Save generated video
         video_path = os.path.join(save_path, f"{test_name}.mp4")
