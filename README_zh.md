@@ -46,16 +46,7 @@
 
 
 ## &#x1F4E3; 更新日志
-<!-- * [2025.02.27] 🔥 EchoMimicV2 被 CVPR 2025 接收。
-* [2025.01.16] 🔥 请查看 [讨论区](https://github.com/antgroup/echomimic_v2/discussions) 学习如何启动 EchoMimicV2。
-* [2025.01.16] 🚀🔥 [加速版 EchoMimicV2 的 GradioUI](https://github.com/antgroup/echomimic_v2/blob/main/app_acc.py) 已发布。
-* [2025.01.03] 🚀🔥 **一分钟即可生成视频**。[加速版 EchoMimicV2](https://github.com/antgroup/echomimic_v2/blob/main/infer_acc.py) 发布，推理速度提升 9 倍（从 ~7 分钟/120 帧到 ~50 秒/120 帧，A100 GPU）。
-* [2024.12.16] 🔥 [参考图像姿态对齐 Demo](https://github.com/antgroup/echomimic_v2/blob/main/demo.ipynb) 已发布，包括参考图像对齐、提取驱动视频的姿态以及生成视频。
-* [2024.11.27] 🔥 [安装教程](https://www.youtube.com/watch?v=2ab6U1-nVTQ) 已发布，感谢 [AiMotionStudio](https://www.youtube.com/@AiMotionStudio) 的贡献。
-* [2024.11.22] 🔥 [GradioUI](https://github.com/antgroup/echomimic_v2/blob/main/app.py) 已发布，感谢 @gluttony-10 的贡献。
-* [2024.11.22] 🔥 [ComfyUI](https://github.com/smthemex/ComfyUI_EchoMimic) 已发布，感谢 @smthemex 的贡献。
-* [2024.11.21] 🔥 我们发布了 EMTD 数据集列表和处理脚本。
-* [2024.11.21] 🔥 我们发布了 [EchoMimicV2](https://github.com/antgroup/echomimic_v2) 的代码和模型。 -->
+* [2025.08.12] 🔥 EchoMimicV3支持16G显存，使用[ComfyUI](https://github.com/smthemex/ComfyUI_EchoMimic). 感谢 @[smthemex](https://github.com/smthemex)的贡献。
 * [2025.08.10] 🔥 [GradioUI](https://github.com/antgroup/echomimic_v3/blob/main/app.py) 已发布，感谢 @[gluttony-10](https://github.com/gluttony-10) 的贡献。
 * [2025.08.09] 🔥 我们在 ModelScope 上发布了 [模型](https://modelscope.cn/models/BadToBest/EchoMimicV3)。
 * [2025.08.08] 🔥 我们在 Huggingface 上发布了 [代码](https://github.com/antgroup/echomimic_v3) 和 [模型](https://huggingface.co/BadToBest/EchoMimicV3)。
